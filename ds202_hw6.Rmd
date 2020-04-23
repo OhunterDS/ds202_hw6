@@ -1,0 +1,45 @@
+---
+title: "Homework 6"
+author: "Orion Hunter, OhunterDS"
+date: "4/23/2020"
+output: html_document
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r}
+library(dplyr)
+library(tidyr)
+library(lubridate)
+library(ggplot2)
+BiS <- readxl::read_xlsx("KIB.xlsx",sheet='Best in show')
+BiSFull <- readxl::read_xlsx("KIB.xlsx",sheet='Best in show full sheet')
+```
+
+# 1
+```{r}
+BiS <- BiS[,-c(2:4)]
+colnames(BiS) <- BiS[5,]
+BiS <- BiS[-c(1:6),]
+BiS <- BiS[,c(1,2,4,6,7,43)]
+colnames(BiS) <- c("Breed","Type of Dog","Popular","Intelligence Score","Intelligence","Size")
+colnames(BiSFull) <- BiSFull[2,]
+BiSFull <- BiSFull[,c(1,3,5,30,32,41)]
+BiSFull <- BiSFull[-c(1:3),]
+colnames(BiSFull) <- c("breed","type","score","popular","size","intel")
+BiSFull$score <- as.numeric(BiSFull$score)
+BiSFull$popular <- as.numeric(BiSFull$popular)
+head(BiS)
+BiSFull$size2 <- as.factor(BiSFull$size)
+levels(BiSFull$size2) <- c(3,2,1)
+BiSFull$size2 <- as.numeric(BiSFull$size2)
+BiSFull$intel2 <- as.factor(BiSFull$intel)
+```
+
+# 2  
+
+```{r}
+BiSFull %>%  ggplot(aes(x=score,y=-popular,color=type, shape=intel2))+geom_jitter(aes(size=size2/2))+labs(x="Data Score",y="Popularity",size="Size of Dog",shape="Intelligent",color="Type of Dog") + scale_size_continuous(breaks=c(.5,1,1.5), labels=c("Small","Medium","Large")) +geom_text(aes(label=breed),nudge_y=-3)
+```
